@@ -21,7 +21,12 @@ function label_help_form_alter(&$form, &$form_state, $form_id) {
 
   $children = array_intersect_key($form, array_flip(Element::children($form)));
   foreach ($children as $key => $item) {
-    $field = $form_state->getFormObject()->getEntity()->getFieldDefinition($key);
+    $form_object = $form_state->getFormObject();
+    if (!method_exists($form_object, 'getEntity')) {
+      continue;
+    }
+    $field = $form_object->getEntity()->getFieldDefinition($key);
+
     $label_help = NULL;
     if (method_exists($field, 'getThirdPartySetting')) {
       $label_help = $field->getThirdPartySetting('label_help', 'label_help_description');
